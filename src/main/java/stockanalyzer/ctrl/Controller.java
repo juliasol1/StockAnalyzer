@@ -5,80 +5,84 @@ package stockanalyzer.ctrl;
 //Uber Technologies, Inc. (UBER)
 
 import stockanalyzer.ui.YahooException;
-import yahooApi.YahooFinance;
-import yahooApi.beans.QuoteResponse;
-import yahooApi.beans.YahooResponse;
-
-
+import yahoofinance.Stock;
+import yahoofinance.histquotes.Interval;
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 public class Controller {
 
 	List<String> myTickers = new ArrayList<>();
 	Stock stock = null;
+	Calendar calendar = null;
 
 	public void process(String ticker) throws YahooException {
 
+		calender = Calendar.getInstance();
+		calender.add(Calendar.DAY_OF_WEEK, -11);
 		System.out.println("Start process");
 
-		System.out.println(ticker);
+		myTickers.add(ticker);
 
 		System.out.println("The history:");
 
 		for (String str : myTickers) {
-			getHighestHistory(str);
+			System.out.println("Name: " + str + ", Last price: " + Math.round(getHighestHistorical(str)*100.0)/100.0);
 		}
-		System.out.println("The cours of last 10 days:");
+
+		System.out.println("Last 10 days");
+
 		for (String str : myTickers) {
-			getHighestHistory(str);
+			System.out.println("Name: " + str + ", Last price: " + Math.round(getAverageHistorical(str)*100.0)/100.0);
 		}
 
-		//TODO implement Error handling 
+		System.out.println("The number of records in your shares");
 
-		//TODO implement methods for
-		//1) Daten laden
-		//2) Daten Analyse
+		for (String str : myTickers) {
+			System.out.println("Data sets from: "+ str +" are: " + getDataQuantityHistorical(str));
+		}
+
 
 	}
 
-
-	public void getHighestHistory(String myTicker) {
+	public double getHighestHistorical(String myTicker) {
+		double result = 0;
 		try {
 			stock = yahoofinance.YahooFinance.get(myTicker);
-			stock.getHistory().forEach(quote -> quote.getDate());
+			result = stock.getHistory(calender, Interval.DAILY).stream()
+					.mapToDouble(value -> value.getClose().doubleValue())
+					.max()
+					.orElse(0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
-	public void getAverageHistorical(String myTicker) {
+	public double getAverageHistorical(String myTicker) {
+		double result = 0;
 		try {
 			stock = yahoofinance.YahooFinance.get(myTicker);
-			stock.getHistory().forEach(quote -> System.out.println(quote.getDate().toInstant()));
+			result = stock.getHistory(calender, Interval.DAILY).stream()
+					.mapToDouble(value -> value.getClose().doubleValue())
+					.average()
+					.orElse(0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
-	public void getDataQuantityHistory(String myTicker) {
+	public double getDataQuantityHistorical(String myTicker) {
+		double count = 0;
 		try {
 			stock = yahoofinance.YahooFinance.get(myTicker);
-			stock.getHistory().forEach(quote -> System.out.println(quote.getDate().toInstant()));
+			count = stock.getHistory().stream()
+					.count();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+		return count;
 
-	public Object getData(String searchString) {
-
-		
-		return null;
-	}
-
-
-	public void closeConnection() {
-		
 	}
 }

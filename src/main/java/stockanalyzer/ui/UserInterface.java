@@ -12,32 +12,32 @@ public class UserInterface
 	public void getDataFromCtrl1(){
 		try{
 			ctrl.process("CSCO");
-		}		catch (YahooException ye){
-			System.out.println(ye.getMessage());
+		}		catch (YahooException y){
+			System.out.println(y.getMessage());
 		}
 	}
 
 	public void getDataFromCtrl2()  {
 		try{
 			ctrl.process("AAPL");
-		}		catch (YahooException ye){
-			System.out.println(ye.getMessage());
+		}		catch (YahooException y){
+			System.out.println(y.getMessage());
 		}
 	}
 
 	public void getDataFromCtrl3(){
 		try{
 			ctrl.process("UBER");
-		}		catch (YahooException ye){
-			System.out.println(ye.getMessage());
+		}		catch (YahooException y){
+			System.out.println(y.getMessage());
 		}
 	}
 
 	public void getDataForCustomInput() {
 		try{
 			ctrl.process(readLine());
-		}		catch (YahooException ye){
-			System.out.println(ye.getMessage());
+		}		catch (YahooException y){
+			System.out.println(y.getMessage());
 		}
 
 	}
@@ -45,7 +45,7 @@ public class UserInterface
 
 	public void start() throws YahooException {
 		Menu<Runnable> menu = new Menu<>("User Interface");
-		menu.setTitel("Wählen Sie aus:");
+		menu.setTitel("Please choose from:");
 		menu.insert("a", "Choice Cisco Systems, Inc.", this::getDataFromCtrl1);
 		menu.insert("b", "Apple", this::getDataFromCtrl2);
 		menu.insert("c", "Uber", this::getDataFromCtrl3);
